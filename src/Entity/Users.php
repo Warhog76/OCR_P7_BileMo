@@ -3,31 +3,49 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationClientItemsPerPage: true,
+    paginationItemsPerPage: 5,
+    paginationMaximumItemsPerPage: 10,
+)]
+#[GetCollection(normalizationContext: ['groups' => 'user:collection:read'])]
+#[Get]
+#[Post]
+#[Delete]
 class Users implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:collection:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:collection:read', 'user:write'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:item:read', 'user:write'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['user:item:read'])]
     private ?string $role = null;
 
     #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'users')]

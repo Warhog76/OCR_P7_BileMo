@@ -3,38 +3,68 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\ProductsRepository;
 use App\Services\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductsRepository::class)]
 #[ApiResource]
+#[GetCollection]
+#[Get]
 class Products
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['products:collection:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Groups(['products:collection:read', 'products:item:write'])]
     private ?string $manufacturer = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Groups(['products:collection:read', 'products:item:write'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(
+        min: '10',
+        minMessage: 'Your description must contain at least 10 characters'
+    )]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Regex(
+        pattern: '/[a-zA-Z0-9._\p{L}-]{1,20}/'
+    )]
+    #[Groups(['products:item:read', 'products:item:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Groups(['products:item:read', 'products:item:write'])]
     private ?string $screen = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'The value {{ value }} is not a valid {{ type }}.'
+    )]
+    #[Groups(['products:item:read', 'products:item:write'])]
     private ?string $price = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $slug = null;
 
     #[ORM\ManyToMany(targetEntity: customers::class, inversedBy: 'products')]
