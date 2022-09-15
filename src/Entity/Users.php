@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 #[ApiResource(
@@ -21,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     paginationMaximumItemsPerPage: 10,
 )]
 #[GetCollection(normalizationContext: ['groups' => 'user:collection:read'])]
-#[Get]
+#[Get(normalizationContext: ['groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read']])]
 #[Post]
 #[Delete]
 class Users implements PasswordAuthenticatedUserInterface
@@ -29,26 +30,45 @@ class Users implements PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:collection:read'])]
+    #[Groups(['user:collection:read', 'user:item:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: '5',
+        max: '15',
+        minMessage: 'Your username must contain at least 5 characters and maximum 15 characters'
+    )]
     #[Groups(['user:collection:read', 'user:write'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: '10',
+        minMessage: 'Your password must contain at least 10 characters'
+    )]
+    #[Assert\NotNull]
     #[Groups(['user:write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Email(
+        message: 'The email {{ value }} is not a valid email.'
+    )]
     #[Groups(['user:item:read', 'user:write'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     #[Groups(['user:item:read'])]
     private ?string $role = null;
 
     #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'users')]
+    #[Groups(['customer:collection:read'])]
     private Collection $customers;
 
     public function __construct()
