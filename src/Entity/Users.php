@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -21,10 +23,19 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
 )]
-#[GetCollection(normalizationContext: ['groups' => 'user:collection:read'])]
-#[Get(normalizationContext: ['groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read']])]
+#[GetCollection(
+    normalizationContext: ['groups' => 'user:collection:read']
+)]
+#[Get(
+    normalizationContext: ['groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read']]
+)]
 #[Post]
 #[Delete]
+#[ApiFilter(
+    SearchFilter::class, properties: [
+        'id' => 'exact',
+        'customers' => 'partial', ]
+)]
 class Users implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
