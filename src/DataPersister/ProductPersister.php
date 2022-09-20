@@ -8,12 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ProductPersister implements DataPersisterInterface
 {
-    private EntityManagerInterface $_entityManager;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
-        $this->_entityManager = $entityManager;
     }
 
     public function supports($data): bool
@@ -26,13 +24,13 @@ class ProductPersister implements DataPersisterInterface
         $data->setCreatedAt(new \DateTimeImmutable());
         $data->setUpdatedAt(new \DateTimeImmutable());
 
-        $this->_entityManager->persist($data);
-        $this->_entityManager->flush();
+        $this->entityManager->persist($data);
+        $this->entityManager->flush();
     }
 
     public function remove($data)
     {
-        $this->_entityManager->remove($data);
-        $this->_entityManager->flush();
+        $this->entityManager->remove($data);
+        $this->entityManager->flush();
     }
 }
