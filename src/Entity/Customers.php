@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomersRepository::class)]
 #[ApiResource]
@@ -36,18 +37,29 @@ class Customers
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     #[Groups(['customer:collection:read', 'customer:item:write'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     #[Groups(['customer:item:read', 'customer:item:write'])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
+    #[Assert\Email(
+        message: 'The email {{ value }} is not a valid email.'
+    )]
     #[Groups(['customer:collection:read'])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\NotNull]
     private ?string $role = null;
 
     #[ORM\ManyToMany(targetEntity: Products::class, mappedBy: 'customers')]

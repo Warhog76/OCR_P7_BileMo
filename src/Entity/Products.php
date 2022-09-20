@@ -18,12 +18,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductsRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationClientItemsPerPage: true,
+    paginationItemsPerPage: 5,
+    paginationMaximumItemsPerPage: 10,
+)]
 #[GetCollection]
 #[Get]
-#[Post]
-#[Put]
-#[Delete]
 class Products
 {
     #[ORM\Id]
