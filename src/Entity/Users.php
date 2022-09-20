@@ -24,17 +24,19 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationMaximumItemsPerPage: 10,
 )]
 #[GetCollection(
-    normalizationContext: ['groups' => 'user:collection:read']
+    normalizationContext: [
+        'groups' => 'user:collection:read', ]
 )]
 #[Get(
-    normalizationContext: ['groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read']]
+    normalizationContext: [
+        'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ]
 )]
-#[Post]
+#[Post(securityPostDenormalize: "is_granted('ADMIN')")]
 #[Delete]
 #[ApiFilter(
     SearchFilter::class, properties: [
         'id' => 'exact',
-        'customers' => 'partial', ]
+        'customers.surname' => 'exact', ]
 )]
 class Users implements PasswordAuthenticatedUserInterface
 {
