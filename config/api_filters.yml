@@ -1,0 +1,7 @@
+services:
+  customers.property_filter:
+    parent: 'api_platform.serializer.property_filter'
+    arguments:         # Default arguments values
+      - 'customers' # The query parameter name
+      - true        # Allow to override the default serialization properties
+    tags: [ 'api_platform.filter' ]

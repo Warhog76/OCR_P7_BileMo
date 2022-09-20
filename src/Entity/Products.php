@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ProductsRepository;
 use App\Services\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,6 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource]
 #[GetCollection]
 #[Get]
+#[Post]
+#[Put]
+#[Delete]
 class Products
 {
     #[ORM\Id]
