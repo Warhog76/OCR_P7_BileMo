@@ -68,6 +68,9 @@ class Customers
     #[ORM\ManyToMany(targetEntity: Users::class, mappedBy: 'customers')]
     private Collection $users;
 
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -177,6 +180,18 @@ class Customers
         if ($this->users->removeElement($user)) {
             $user->removeCustomer($this);
         }
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
 
         return $this;
     }

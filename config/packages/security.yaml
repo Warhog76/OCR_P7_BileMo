@@ -1,16 +1,17 @@
 security:
     # https://symfony.com/doc/current/security.html#c-hashing-passwords
     password_hashers:
-        App\Entity\User: 'auto'
+        App\Entity\Users: 'auto'
+        App\Entity\Customers: 'auto'
 
     # https://symfony.com/doc/current/security/authenticator_manager.html
     enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        app_user_provider:
+        users:
             entity:
-                class: App\Entity\Users
-                property: email
+                class: 'App\Entity\Users'
+                property: 'email'
 
     firewalls:
         dev:
@@ -20,6 +21,7 @@ security:
         login:
             pattern: ^/api/login
             stateless: true
+            provider: users
             json_login:
                 check_path: /api/login_check
                 username_path: email
@@ -30,8 +32,7 @@ security:
         api:
             pattern: ^/api/
             stateless: true
-            provider: app_user_provider
-            jwt: ~
+            provider: users
 
         main:
             lazy: true
