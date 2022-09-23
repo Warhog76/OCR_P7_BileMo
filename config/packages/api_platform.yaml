@@ -1,0 +1,35 @@
+api_platform:
+  mapping:
+    paths: ['%kernel.project_dir%/src/Entity']
+  patch_formats:
+    json: ['application/merge-patch+json']
+  swagger:
+    versions: [3]
+    api_keys:
+      API key authorization (Bearer token):
+        name: Authorization
+        type: header
+  title: 'BileMo API'
+  description: |
+    This API provides a catalogue of smartphone, with restricted access for BileMo client's by JWT authentication. 
+    The following interactive documentation will help BileMo's client to familiarise with the API and show how to consume the different resources that are available with the help of examples.
+    
+    First, you need to generate a JWT Token requesting the route "/api/login_check" (Token) with your credentials (or given example).
+    
+    Then, provide obtained token in the "Authorize" section, with the following format "Bearer + jwt-token".
+    You can have access to the different requests !
+
+  version: 1.0.0
+  formats:
+    jsonld:
+      mime_types:
+        - application/ld+json
+    json:
+      mime_types:
+        - application/json
+    html:
+      mime_types:
+        - text/html
+    jsonhal:
+      mime_types:
+        - application/hal+json

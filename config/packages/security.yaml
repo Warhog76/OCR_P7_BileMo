@@ -7,31 +7,35 @@ security:
     enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
+        from_database:
             entity:
-                class: 'App\Entity\Users'
-                property: 'email'
+                class: App\Entity\Users
+                property: email
 
     firewalls:
         dev:
-            pattern: ^/_(profiler|wdt)
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
+
+        login:
+            pattern: ^/api/login
             stateless: true
-            provider: app_user_provider
             json_login:
-                check_path: /authentication_token
-                username_path: 'email'
-                password_path: 'password'
+                check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-            jwt: ~
+
+        api:
+            pattern: ^/api/
+            stateless: true
+
+        main:
+            lazy: true
 
     access_control:
-        - { path: ^/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
-        - { path: ^/authentication_token, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/BileMo/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
+        - { path: ^/BileMo/login, roles: PUBLIC_ACCESS }
+        - { path: ^/BileMo, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

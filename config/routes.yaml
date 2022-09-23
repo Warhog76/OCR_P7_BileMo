@@ -2,5 +2,5 @@ controllers:
     resource: ../src/Controller/
     type: attribute
 
-authentication_token:
-    path: /authentication_token
+api_login_check:
+    path: /api/login_check
