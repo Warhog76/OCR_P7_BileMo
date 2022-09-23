@@ -7,7 +7,7 @@ security:
     enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        from_database:
+        app_user_provider:
             entity:
                 class: App\Entity\Users
                 property: email
@@ -22,20 +22,24 @@ security:
             stateless: true
             json_login:
                 check_path: /api/login_check
+                username_path: email
+                password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
         api:
             pattern: ^/api/
             stateless: true
+            provider: app_user_provider
+            jwt: ~
 
         main:
             lazy: true
 
     access_control:
-        - { path: ^/BileMo/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
-        - { path: ^/BileMo/login, roles: PUBLIC_ACCESS }
-        - { path: ^/BileMo, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
