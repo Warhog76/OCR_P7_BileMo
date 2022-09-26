@@ -6,6 +6,7 @@ security:
 
     # https://symfony.com/doc/current/security/authenticator_manager.html
     enable_authenticator_manager: true
+
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         user:
@@ -38,7 +39,7 @@ security:
             lazy: true
 
     access_control:
-        - { path: ^/api/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
