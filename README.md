@@ -1,0 +1,2 @@
+# OCR_P7_Bilemo
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ecdad9f4dc11477d9fd9e9588a2b50f9)](https://app.codacy.com/gh/Warhog76/OCR_P7_Bilemo?utm_source=github.com&utm_medium=referral&utm_content=Warhog76/OCR_P7_Bilemo&utm_campaign=Badge_Grade_Settings)
