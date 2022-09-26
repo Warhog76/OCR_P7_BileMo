@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af88c1d9341b9b5de4d4bcc5363038ba",
+    "content-hash": "3dcfaccbbb96b1e9b51ea6278efb4941",
     "packages": [
         {
             "name": "amphp/amp",
@@ -3879,6 +3879,55 @@
                 "source": "https://github.com/nelmio/NelmioCorsBundle/tree/2.2.0"
             },
             "time": "2021-12-01T09:34:27+00:00"
+        },
+        {
+            "name": "nowakowskir/php-jwt",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nowakowskir/php-jwt.git",
+                "reference": "0868e97abb8d508f23dbbc720781e3cc0f1d2180"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nowakowskir/php-jwt/zipball/0868e97abb8d508f23dbbc720781e3cc0f1d2180",
+                "reference": "0868e97abb8d508f23dbbc720781e3cc0f1d2180",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nowakowskir\\JWT\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Radosław Nowakowski",
+                    "email": "nowakowski.r@gmail.com"
+                }
+            ],
+            "description": "JSON Web Token implementation for PHP.",
+            "homepage": "https://github.com/nowakowskir/php-jwt",
+            "keywords": [
+                "json",
+                "jwt",
+                "token"
+            ],
+            "support": {
+                "issues": "https://github.com/nowakowskir/php-jwt/issues",
+                "source": "https://github.com/nowakowskir/php-jwt/tree/2.0.1"
+            },
+            "time": "2020-12-24T23:12:11+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
