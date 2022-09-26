@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
-    security: "is_granted('ROLE_USER')"
+    security: "is_granted('ROLE_ADMIN')",
 )]
 #[GetCollection(
     normalizationContext: [

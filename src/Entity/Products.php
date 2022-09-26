@@ -3,11 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\ProductsRepository;
 use App\Services\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
+    security: "is_granted('ROLE_User') or is_granted('ROLE_ADMIN')"
 )]
 #[GetCollection]
 #[Get]
@@ -74,7 +72,7 @@ class Products
     #[Assert\NotBlank]
     private ?string $slug = null;
 
-    #[ORM\ManyToMany(targetEntity: customers::class, inversedBy: 'products')]
+    #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'products')]
     private Collection $customers;
 
     public function __construct()
