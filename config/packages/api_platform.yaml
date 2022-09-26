@@ -4,11 +4,11 @@ api_platform:
   patch_formats:
     json: ['application/merge-patch+json']
   swagger:
-    versions: [3]
     api_keys:
-      API key authorization (Bearer token):
+      JWT:
         name: Authorization
         type: header
+
   title: 'BileMo API'
   description: |
     This API provides a catalogue of smartphone, with restricted access for BileMo client's by JWT authentication. 

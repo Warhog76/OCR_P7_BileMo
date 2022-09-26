@@ -12,6 +12,8 @@ use App\Repository\CustomersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -57,10 +59,10 @@ class Customers
     #[Groups(['customer:collection:read'])]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'json')]
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    private ?string $role = null;
+    private ?array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Products::class, mappedBy: 'customers')]
     private Collection $products;
@@ -118,14 +120,27 @@ class Customers
         return $this;
     }
 
-    public function getRole(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->role;
+        return (string) $this->surname;
     }
 
-    public function setRole(string $role): self
+    public function getRoles(): array
     {
-        $this->role = $role;
+        $roles = $this->roles;
+        $roles[] = 'ROLE_ADMIN';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
