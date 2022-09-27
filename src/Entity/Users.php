@@ -23,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
-    security: "is_granted('ROLE_USER')",
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
 )]
 #[GetCollection(
     normalizationContext: [
@@ -33,8 +33,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: [
         'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ]
 )]
-#[Post(security: "is_granted('ROLE_ADMIN')")]
-#[Delete]
+#[Post(
+    security: "is_granted('ROLE_ADMIN')"
+)]
+#[Delete(
+    security: "is_granted('ROLE_ADMIN')"
+)]
 #[ApiFilter(
     SearchFilter::class, properties: [
         'id' => 'exact',

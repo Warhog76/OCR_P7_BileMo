@@ -19,9 +19,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
-    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
 )]
-#[GetCollection]
+#[GetCollection(
+    normalizationContext: [
+    'groups' => ['products:collection:read', 'customer:collection:read'], ]
+)]
 #[Get]
 class Products
 {
@@ -73,6 +75,7 @@ class Products
     private ?string $slug = null;
 
     #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'products')]
+    #[Groups(['customer:collection:read'])]
     private Collection $customers;
 
     public function __construct()
