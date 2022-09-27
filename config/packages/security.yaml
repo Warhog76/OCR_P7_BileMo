@@ -34,6 +34,8 @@ security:
             pattern: ^/api/
             stateless: true
             provider: user
+            entry_point: jwt
+            jwt: ~
 
         main:
             lazy: true
