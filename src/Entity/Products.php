@@ -3,11 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\ProductsRepository;
 use App\Services\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -23,7 +20,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
 )]
-#[GetCollection]
+#[GetCollection(
+    normalizationContext: [
+    'groups' => ['products:collection:read', 'customer:collection:read'], ]
+)]
 #[Get]
 class Products
 {
@@ -74,7 +74,8 @@ class Products
     #[Assert\NotBlank]
     private ?string $slug = null;
 
-    #[ORM\ManyToMany(targetEntity: customers::class, inversedBy: 'products')]
+    #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'products')]
+    #[Groups(['customer:collection:read'])]
     private Collection $customers;
 
     public function __construct()

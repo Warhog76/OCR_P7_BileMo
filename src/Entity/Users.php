@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
 )]
 #[GetCollection(
     normalizationContext: [
@@ -31,14 +33,18 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: [
         'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ]
 )]
-#[Post(securityPostDenormalize: "is_granted('ADMIN')")]
-#[Delete]
+#[Post(
+    security: "is_granted('ROLE_ADMIN')"
+)]
+#[Delete(
+    security: "is_granted('ROLE_ADMIN')"
+)]
 #[ApiFilter(
     SearchFilter::class, properties: [
         'id' => 'exact',
         'customers.surname' => 'exact', ]
 )]
-class Users implements PasswordAuthenticatedUserInterface
+class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -75,10 +81,10 @@ class Users implements PasswordAuthenticatedUserInterface
     #[Groups(['user:item:read', 'user:write'])]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'json')]
     #[Assert\NotBlank]
     #[Groups(['user:item:read'])]
-    private ?string $role = null;
+    private ?array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'users')]
     #[Groups(['customer:collection:read'])]
@@ -130,14 +136,27 @@ class Users implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRole(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->role;
+        return (string) $this->username;
     }
 
-    public function setRole(string $role): self
+    public function getRoles(): array
     {
-        $this->role = $role;
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
@@ -164,5 +183,9 @@ class Users implements PasswordAuthenticatedUserInterface
         $this->customers->removeElement($customer);
 
         return $this;
+    }
+
+    public function eraseCredentials()
+    {
     }
 }

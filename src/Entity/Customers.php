@@ -12,11 +12,15 @@ use App\Repository\CustomersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomersRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    security: "is_granted('ROLE_ADMIN')"
+)]
 #[GetCollection(
     normalizationContext: [
         'groups' => 'customer:collection:read', ]
@@ -28,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Post]
 #[Put]
 #[Delete]
-class Customers
+class Customers implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -57,16 +61,19 @@ class Customers
     #[Groups(['customer:collection:read'])]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'json')]
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    private ?string $role = null;
+    private ?array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Products::class, mappedBy: 'customers')]
     private Collection $products;
 
     #[ORM\ManyToMany(targetEntity: Users::class, mappedBy: 'customers')]
     private Collection $users;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
 
     public function __construct()
     {
@@ -115,14 +122,27 @@ class Customers
         return $this;
     }
 
-    public function getRole(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->role;
+        return (string) $this->surname;
     }
 
-    public function setRole(string $role): self
+    public function getRoles(): array
     {
-        $this->role = $role;
+        $roles = $this->roles;
+        $roles[] = 'ROLE_ADMIN';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
@@ -179,5 +199,22 @@ class Customers
         }
 
         return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }
