@@ -27,14 +27,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[GetCollection(
     normalizationContext: [
-        'groups' => 'user:collection:read', ]
+        'groups' => 'user:collection:read', ],
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
 )]
 #[Get(
     normalizationContext: [
-        'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ]
+        'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ],
+    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
 )]
 #[Post(
-    security: "is_granted('ROLE_ADMIN')"
+    security: "is_granted('ROLE_ADMIN')",
+    securityPostDenormalize: "is_granted('ROLE_ADMIN') and (object.owner == user and previous_object.owner == user)",
+    securityPostDenormalizeMessage: 'Sorry, but you are not the actual customer of this user.'
 )]
 #[Delete(
     security: "is_granted('ROLE_ADMIN')"
