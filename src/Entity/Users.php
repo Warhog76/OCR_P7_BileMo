@@ -23,25 +23,26 @@ use Symfony\Component\Validator\Constraints as Assert;
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
     paginationMaximumItemsPerPage: 10,
-    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[GetCollection(
     normalizationContext: [
         'groups' => 'user:collection:read', ],
-    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[Get(
     normalizationContext: [
         'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ],
-    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[Post(
     security: "is_granted('ROLE_ADMIN')",
-    securityPostDenormalize: "is_granted('ROLE_ADMIN') and (object.owner == user and previous_object.owner == user)",
-    securityPostDenormalizeMessage: 'Sorry, but you are not the actual customer of this user.'
+    securityMessage: 'Only admins can add users.'
 )]
 #[Delete(
-    security: "is_granted('ROLE_ADMIN')"
+    security: "is_granted('ROLE_ADMIN')",
+    securityPostDenormalize: "is_granted('ROLE_ADMIN') and (object.customers == user)",
+    securityPostDenormalizeMessage: 'Sorry, but you are not the actual customer of this user.'
 )]
 #[ApiFilter(
     SearchFilter::class, properties: [
