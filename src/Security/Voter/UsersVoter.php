@@ -53,7 +53,7 @@ class UsersVoter extends Voter
         return false;
     }
 
-    private function canEdit(Customers $customer, $user): bool
+    private function canEdit($customer, $user): bool
     {
         return $customer === $user->getCustomers();
     }

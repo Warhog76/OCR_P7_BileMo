@@ -34,28 +34,10 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        login_user:
-            pattern: ^/api/login
-            stateless: true
-            provider: user
-            json_login:
-                check_path: /api/login_check
-                username_path: email
-                password_path: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
         api_customer:
             pattern: ^/api/
             stateless: true
             provider: customer
-            entry_point: jwt
-            jwt: ~
-
-        api_user:
-            pattern: ^/api/
-            stateless: true
-            provider: user
             entry_point: jwt
             jwt: ~
 
