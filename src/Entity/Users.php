@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -37,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[Post(
     securityMessage: 'Only admins can add users.',
-    securityPostDenormalize: "is_granted('USER_EDIT', object)"
+    securityPostDenormalize: "is_granted('ROLE_ADMIN')"
 )]
 #[Delete(
     securityPostDenormalize: "is_granted('USER_EDIT', object)",
