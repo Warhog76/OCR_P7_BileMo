@@ -3,14 +3,23 @@
 namespace App\Security\Voter;
 
 use App\Entity\Customers;
+
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class CustomersVoter extends Voter
 {
     public const EDIT = 'POST_EDIT';
     public const VIEW = 'POST_VIEW';
+
+    private ?Security $security = null;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -29,17 +38,24 @@ class CustomersVoter extends Voter
         }
 
         // ... (check conditions and return true to grant permission) ...
-        switch ($attribute) {
-            case self::EDIT:
-                // logic to determine if the user can EDIT
-                // return true or false
-                break;
-            case self::VIEW:
-                // logic to determine if the user can VIEW
-                // return true or false
-                break;
+        return match ($attribute) {
+            self::VIEW => $this->canView(),
+            self::EDIT => $this->canEdit($customers, $user),
+            default => throw new \LogicException('This code should not be reached!')
+        };
+    }
+
+    private function canView(): bool
+    {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
         }
 
         return false;
+    }
+
+    private function canEdit(Customers $customers, $user): bool
+    {
+        return $customers === $user->getCustomers();
     }
 }

@@ -3,11 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\CustomersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,20 +14,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomersRepository::class)]
-#[ApiResource(
-    security: "is_granted('ROLE_ADMIN')"
-)]
+#[ApiResource]
 #[GetCollection(
     normalizationContext: [
-        'groups' => 'customer:collection:read', ]
+        'groups' => 'customer:collection:read',
+    ],
 )]
-#[Get(
-    normalizationContext: [
-        'groups' => ['customer:item:read', 'customer:collection:read'], ]
-)]
-#[Post]
-#[Put]
-#[Delete]
 class Customers implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]

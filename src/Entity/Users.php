@@ -22,26 +22,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
-    paginationMaximumItemsPerPage: 10,
-    security: "is_granted('ROLE_ADMIN')"
+    paginationMaximumItemsPerPage: 10
 )]
 #[GetCollection(
     normalizationContext: [
         'groups' => 'user:collection:read', ],
-    security: "is_granted('ROLE_ADMIN')"
+    security: "is_granted('USER_VIEW', object)",
 )]
 #[Get(
     normalizationContext: [
         'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ],
-    security: "is_granted('ROLE_ADMIN')"
+    security: "is_granted('USER_VIEW', object)"
 )]
 #[Post(
-    security: "is_granted('ROLE_ADMIN')",
+    security: "is_granted('USER_EDIT', object)",
     securityMessage: 'Only admins can add users.'
 )]
 #[Delete(
-    security: "is_granted('ROLE_ADMIN')",
-    securityPostDenormalize: "is_granted('ROLE_ADMIN') and (object.customers == user)",
+    securityPostDenormalize: "is_granted('USER_EDIT', object)",
     securityPostDenormalizeMessage: 'Sorry, but you are not the actual customer of this user.'
 )]
 #[ApiFilter(
