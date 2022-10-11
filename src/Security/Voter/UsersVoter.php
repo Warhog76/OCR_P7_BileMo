@@ -22,7 +22,7 @@ class UsersVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW])
+        return self::EDIT == $attribute
             && $subject instanceof Users;
     }
 
@@ -34,22 +34,16 @@ class UsersVoter extends Voter
             return false;
         }
 
-        $user = $subject;
-        // ... (check conditions and return true to grant permission) ...
-        return match ($attribute) {
-            self::VIEW => $this->canView(),
-            self::EDIT => $this->canEdit($currentUser, $user),
-            default => throw new \LogicException('This code should not be reached!')
-        };
-    }
-
-    private function canView(): bool
-    {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
 
-        return false;
+        $user = $subject;
+        // ... (check conditions and return true to grant permission) ...
+        return match ($attribute) {
+            self::EDIT => $this->canEdit($currentUser, $user),
+            default => throw new \LogicException('This code should not be reached!')
+        };
     }
 
     private function canEdit($currentUser, $user): bool
