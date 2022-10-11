@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: [
         'groups' => 'customer:collection:read',
     ],
+    security: "is_granted('ROLE_SUPER_ADMIN')",
 )]
 class Customers implements UserInterface, PasswordAuthenticatedUserInterface
 {

@@ -37,25 +37,10 @@ class CustomersVoter extends Voter
             return false;
         }
 
-        // ... (check conditions and return true to grant permission) ...
-        return match ($attribute) {
-            self::VIEW => $this->canView(),
-            self::EDIT => $this->canEdit($customers, $user),
-            default => throw new \LogicException('This code should not be reached!')
-        };
-    }
-
-    private function canView(): bool
-    {
-        if ($this->security->isGranted('ROLE_ADMIN')) {
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
             return true;
         }
 
         return false;
-    }
-
-    private function canEdit(Customers $customers, $user): bool
-    {
-        return $customers === $user->getCustomers();
     }
 }

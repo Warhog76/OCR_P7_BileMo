@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Customers;
 use App\Entity\Users;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -24,22 +23,22 @@ class UsersVoter extends Voter
     protected function supports(string $attribute, $subject): bool
     {
         return in_array($attribute, [self::EDIT, self::VIEW])
-            && $subject instanceof Customers;
+            && $subject instanceof Users;
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
-        $user = $token->getUser();
+        $currentUser = $token->getUser();
         // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
+        if (!$currentUser instanceof UserInterface) {
             return false;
         }
 
-        $customer = $subject;
+        $user = $subject;
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
             self::VIEW => $this->canView(),
-            self::EDIT => $this->canEdit($customer, $user),
+            self::EDIT => $this->canEdit($currentUser, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -53,8 +52,8 @@ class UsersVoter extends Voter
         return false;
     }
 
-    private function canEdit($customer, $user): bool
+    private function canEdit($currentUser, $user): bool
     {
-        return $customer === $user->getCustomers();
+        return $currentUser === $user->getCustomers();
     }
 }

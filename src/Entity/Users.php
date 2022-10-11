@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -27,16 +28,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[GetCollection(
     normalizationContext: [
         'groups' => 'user:collection:read', ],
-    security: "is_granted('USER_VIEW', object)",
+    security: "is_granted('ROLE_ADMIN')",
 )]
 #[Get(
     normalizationContext: [
         'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ],
-    security: "is_granted('USER_VIEW', object)"
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[Post(
-    security: "is_granted('USER_EDIT', object)",
-    securityMessage: 'Only admins can add users.'
+    securityMessage: 'Only admins can add users.',
+    securityPostDenormalize: "is_granted('USER_EDIT', object)"
 )]
 #[Delete(
     securityPostDenormalize: "is_granted('USER_EDIT', object)",
