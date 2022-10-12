@@ -23,13 +23,13 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    #[Groups(['customer:collection:read', 'customer:item:write'])]
+    #[Groups(['customer:collection:read'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    #[Groups(['customer:item:read', 'customer:item:write'])]
+    #[Groups(['customer:item:read'])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
