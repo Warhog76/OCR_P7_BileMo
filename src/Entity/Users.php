@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[GetCollection(
     normalizationContext: [
         'groups' => 'user:collection:read', ],
-    security: "is_granted('ROLE_ADMIN')",
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[Get(
     normalizationContext: [
@@ -36,10 +36,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[Post(
     securityMessage: 'Only admins can add users.',
-    securityPostDenormalize: "is_granted('ROLE_ADMIN')"
+    securityPostDenormalize: "is_granted('MODIFY', object)"
 )]
 #[Delete(
-    securityPostDenormalize: "is_granted('USER_EDIT', object)",
+    securityPostDenormalize: "is_granted('DELETE', object)",
     securityPostDenormalizeMessage: 'Sorry, but you are not the actual customer of this user.'
 )]
 #[ApiFilter(

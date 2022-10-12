@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
 use App\Repository\CustomersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,13 +12,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomersRepository::class)]
-#[ApiResource]
-#[GetCollection(
-    normalizationContext: [
-        'groups' => 'customer:collection:read',
-    ],
-    security: "is_granted('ROLE_SUPER_ADMIN')",
-)]
 class Customers implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]

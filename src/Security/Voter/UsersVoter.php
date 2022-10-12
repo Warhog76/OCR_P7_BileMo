@@ -5,23 +5,14 @@ namespace App\Security\Voter;
 use App\Entity\Users;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class UsersVoter extends Voter
 {
-    public const EDIT = 'USER_EDIT';
-
-    private ?Security $security = null;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
-    }
 
     protected function supports(string $attribute, $subject): bool
     {
-        return self::EDIT == $attribute
+        return in_array($attribute, ['SHOW', 'DELETE'])
             && $subject instanceof Users;
     }
 
@@ -33,20 +24,10 @@ class UsersVoter extends Voter
             return false;
         }
 
-        if ($this->security->isGranted('ROLE_ADMIN')) {
-            return true;
-        }
-
-        $user = $subject;
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
-            self::EDIT => $this->canEdit($currentUser, $user),
-            default => throw new \LogicException('This code should not be reached!')
+            'MODIFY', 'DELETE' => $subject->getCustomers()->getId() == $currentUser->getUserIdentifier(),
+            default => false,
         };
-    }
-
-    private function canEdit($currentUser, $user): bool
-    {
-        return $currentUser === $user->getCustomers();
     }
 }
