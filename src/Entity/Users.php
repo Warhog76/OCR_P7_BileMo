@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[Post(
     securityMessage: 'Only admins can add users.',
-    securityPostDenormalize: "is_granted('MODIFY', object)"
+    securityPostDenormalize: "is_granted('ROLE_ADMIN')"
 )]
 #[Delete(
     securityPostDenormalize: "is_granted('DELETE', object)",

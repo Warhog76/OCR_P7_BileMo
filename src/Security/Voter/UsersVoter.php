@@ -9,10 +9,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UsersVoter extends Voter
 {
-
     protected function supports(string $attribute, $subject): bool
     {
-        return in_array($attribute, ['SHOW', 'DELETE'])
+        return 'DELETE' == $attribute
             && $subject instanceof Users;
     }
 
@@ -26,7 +25,7 @@ class UsersVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
-            'MODIFY', 'DELETE' => $subject->getCustomers()->getEmail() == $currentUser->getUserIdentifier(),
+            'DELETE' => $subject->getCustomers()->getEmail() == $currentUser->getUserIdentifier(),
             default => false,
         };
     }
