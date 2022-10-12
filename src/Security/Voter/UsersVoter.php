@@ -26,7 +26,7 @@ class UsersVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
-            'MODIFY', 'DELETE' => $subject->getCustomers()->getId() == $currentUser->getUserIdentifier(),
+            'MODIFY', 'DELETE' => $subject->getCustomers()->getEmail() == $currentUser->getUserIdentifier(),
             default => false,
         };
     }
