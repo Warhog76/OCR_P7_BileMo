@@ -109,7 +109,7 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->surname;
+        return (string) $this->id;
     }
 
     public function getRoles(): array
