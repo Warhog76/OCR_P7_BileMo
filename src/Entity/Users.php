@@ -88,7 +88,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'json')]
     #[Assert\NotBlank]
-    #[Groups(['user:item:read'])]
+    #[Groups(['user:item:read', 'user:write'])]
     private ?array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'users')]
@@ -148,7 +148,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->email;
     }
 
     public function getRoles(): array

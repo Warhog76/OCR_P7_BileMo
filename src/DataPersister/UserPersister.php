@@ -29,12 +29,13 @@ class UserPersister implements DataPersisterInterface
     public function persist($data)
     {
         if ($data->getPlainPassword()) {
-            $data->setPassword($this->userPasswordHasher->hashPassword($data, $data->getPlainPassword()));
-            // the plain password isn't saved into the database but this is used as a cautious, preventive measure
-            // to avoid the plain password being serialised to the session via Security
+            $data->setPassword(
+                $this->userPasswordHasher->hashPassword($data, $data->getPlainPassword())
+            );
             $data->eraseCredentials();
         }
 
+        $data->setRoles(['ROLE_USER']);
         $customer = $this->security->getUser();
         $data->addCustomer($customer->getUserIdentifier());
 
