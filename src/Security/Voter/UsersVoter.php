@@ -11,21 +11,21 @@ class UsersVoter extends Voter
 {
     protected function supports(string $attribute, $subject): bool
     {
-        return 'DELETE' == $attribute
+        return in_array($attribute, ['SHOW', 'DELETE'])
             && $subject instanceof Users;
     }
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
-        $currentUser = $token->getUser();
+        $customer = $token->getUser();
         // if the user is anonymous, do not grant access
-        if (!$currentUser instanceof UserInterface) {
+        if (!$customer instanceof UserInterface) {
             return false;
         }
 
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
-            'DELETE' => $subject->getCustomers()->getId() == $currentUser->getUserIdentifier(),
+            'SHOw', 'DELETE' => $subject->getCustomers()->getId() == $customer->getId(),
             default => false,
         };
     }

@@ -32,7 +32,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Get(
     normalizationContext: [
         'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ],
-    security: "is_granted('ROLE_ADMIN')"
+    security: "is_granted('SHOW', object)",
+    securityMessage: 'Sorry, but you are not the actual customer of this user.'
 )]
 #[Post(
     denormalizationContext: [
