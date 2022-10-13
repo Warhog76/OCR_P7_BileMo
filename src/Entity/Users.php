@@ -72,8 +72,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(
-        min: '10',
-        minMessage: 'Your password must contain at least 10 characters'
+        min: '8',
+        minMessage: 'Your password must contain at least 8 characters'
     )]
     #[Assert\NotNull]
     #[Groups(['user:write'])]
