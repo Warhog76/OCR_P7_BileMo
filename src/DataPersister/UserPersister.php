@@ -37,7 +37,7 @@ class UserPersister implements DataPersisterInterface
 
         $data->setRoles(['ROLE_USER']);
         $customer = $this->security->getUser();
-        $data->addCustomer($customer->getUserIdentifier());
+        $data->addCustomer($customer->getId());
 
         $this->entityManager->persist($data);
         $this->entityManager->flush();
