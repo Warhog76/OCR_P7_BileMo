@@ -25,4 +25,5 @@ services:
 
     App\OpenApi\JwtDecorator:
         decorates: 'api_platform.openapi.factory'
-        arguments: []
+        arguments: ['@App\OpenApi\JwtDecorator.inner']
+        autoconfigure: false
