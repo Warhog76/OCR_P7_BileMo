@@ -24,7 +24,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: [
     'groups' => ['products:collection:read', 'customer:collection:read'], ]
 )]
-#[Get]
+#[Get(
+    normalizationContext: [
+        'groups' => ['products:collection:read', 'products:item:read', 'customer:collection:read'], ]
+)]
 class Products
 {
     #[ORM\Id]
@@ -35,12 +38,12 @@ class Products
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['products:collection:read', 'products:item:write'])]
+    #[Groups(['products:collection:read'])]
     private ?string $manufacturer = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['products:collection:read', 'products:item:write'])]
+    #[Groups(['products:collection:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -53,12 +56,12 @@ class Products
     #[Assert\Regex(
         pattern: '/[a-zA-Z0-9._\p{L}-]{1,20}/'
     )]
-    #[Groups(['products:item:read', 'products:item:write'])]
+    #[Groups(['products:item:read'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['products:item:read', 'products:item:write'])]
+    #[Groups(['products:item:read'])]
     private ?string $screen = null;
 
     #[ORM\Column(length: 255)]
@@ -67,7 +70,7 @@ class Products
         type: 'integer',
         message: 'The value {{ value }} is not a valid {{ type }}.'
     )]
-    #[Groups(['products:item:read', 'products:item:write'])]
+    #[Groups(['products:item:read'])]
     private ?string $price = null;
 
     #[ORM\Column(length: 255)]
