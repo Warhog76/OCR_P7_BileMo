@@ -89,7 +89,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'json')]
     #[Assert\NotBlank]
-    #[Groups(['user:item:read', 'user:write'])]
+    #[Groups(['user:item:read'])]
     private ?array $roles = [];
 
     #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'users')]
