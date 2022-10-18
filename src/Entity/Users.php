@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use App\DataPersister\UserPersister;
 use App\Repository\UsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -88,18 +89,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
-    #[Assert\NotBlank]
     #[Groups(['user:item:read'])]
     private ?array $roles = [];
 
-    #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(inversedBy: 'relation')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(['customer:collection:read'])]
-    private Collection $customers;
-
-    public function __construct()
-    {
-        $this->customers = new ArrayCollection();
-    }
+    private ?Customers $relation = null;
 
     public function getId(): ?int
     {
@@ -167,31 +163,19 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Customers>
-     */
-    public function getCustomers(): Collection
-    {
-        return $this->customers;
-    }
-
-    public function addCustomer(Customers $customer): self
-    {
-        if (!$this->customers->contains($customer)) {
-            $this->customers->add($customer);
-        }
-
-        return $this;
-    }
-
-    public function removeCustomer(Customers $customer): self
-    {
-        $this->customers->removeElement($customer);
-
-        return $this;
-    }
-
     public function eraseCredentials()
     {
+    }
+
+    public function getRelation(): ?Customers
+    {
+        return $this->relation;
+    }
+
+    public function setRelation(?Customers $relation): self
+    {
+        $this->relation = $relation;
+
+        return $this;
     }
 }

@@ -48,16 +48,16 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Products::class, mappedBy: 'customers')]
     private Collection $products;
 
-    #[ORM\ManyToMany(targetEntity: Users::class, mappedBy: 'customers')]
-    private Collection $users;
-
     #[ORM\Column(length: 255)]
     private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'relation', targetEntity: Users::class, orphanRemoval: true)]
+    private Collection $relation;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        $this->users = new ArrayCollection();
+        $this->relation = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,33 +153,6 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Users>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(Users $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addCustomer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(Users $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeCustomer($this);
-        }
-
-        return $this;
-    }
-
     public function getPassword(): ?string
     {
         return $this->password;
@@ -195,5 +168,35 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection<int, Users>
+     */
+    public function getRelation(): Collection
+    {
+        return $this->relation;
+    }
+
+    public function addRelation(Users $relation): self
+    {
+        if (!$this->relation->contains($relation)) {
+            $this->relation->add($relation);
+            $relation->setRelation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Users $relation): self
+    {
+        if ($this->relation->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getRelation() === $this) {
+                $relation->setRelation(null);
+            }
+        }
+
+        return $this;
     }
 }

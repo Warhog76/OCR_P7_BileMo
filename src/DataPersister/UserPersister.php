@@ -3,22 +3,23 @@
 namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
+use App\Entity\Customers;
 use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class UserPersister implements DataPersisterInterface
 {
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $userPasswordHasher;
-    private Security $security;
+    private TokenInterface $token;
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, TokenInterface $token)
     {
         $this->entityManager = $entityManager;
         $this->userPasswordHasher = $userPasswordHasher;
-        $this->security = $security;
+        $this->token = $token;
     }
 
     public function supports($data): bool
@@ -28,16 +29,21 @@ class UserPersister implements DataPersisterInterface
 
     public function persist($data)
     {
-        if ($data->getPlainPassword()) {
+        if ($data->getPassword()) {
             $data->setPassword(
-                $this->userPasswordHasher->hashPassword($data, $data->getPlainPassword())
+                $this->userPasswordHasher->hashPassword($data, $data->getPassword())
             );
             $data->eraseCredentials();
         }
 
         $data->setRoles(['ROLE_USER']);
-        $customer = $this->security->getUser();
-        $data->addCustomer($customer->getId());
+
+        $customer = $this->token->getUser();
+        if (!$customer instanceof Customers) {
+            return false;
+        }
+        $id = $customer->getId();
+        $data->setRelation($id);
 
         $this->entityManager->persist($data);
         $this->entityManager->flush();
