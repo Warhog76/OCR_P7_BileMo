@@ -2,14 +2,14 @@
 
 namespace App\DataPersister;
 
-use ApiPlatform\Core\DataPersister\DataPersisterInterface;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Customers;
 use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class UserPersister implements DataPersisterInterface
+class UserPersister implements ContextAwareDataPersisterInterface
 {
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $userPasswordHasher;
@@ -22,13 +22,14 @@ class UserPersister implements DataPersisterInterface
         $this->token = $token;
     }
 
-    public function supports($data): bool
+    public function supports($data, array $context = []): bool
     {
         return $data instanceof Users;
     }
 
-    public function persist($data)
+    public function persist($data, array $context = [])
     {
+
         if ($data->getPassword()) {
             $data->setPassword(
                 $this->userPasswordHasher->hashPassword($data, $data->getPassword())
@@ -48,7 +49,7 @@ class UserPersister implements DataPersisterInterface
         $this->entityManager->flush();
     }
 
-    public function remove($data)
+    public function remove($data, array $context = [])
     {
         $this->entityManager->remove($data);
         $this->entityManager->flush();
