@@ -42,8 +42,7 @@ class UserPersister implements DataPersisterInterface
         if (!$customer instanceof Customers) {
             return false;
         }
-        $id = $customer->getId();
-        $data->setRelation($id);
+        $data->setRelation($customer->getId());
 
         $this->entityManager->persist($data);
         $this->entityManager->flush();
