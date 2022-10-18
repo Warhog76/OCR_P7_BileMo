@@ -77,7 +77,7 @@ Launch the Apache/Php runtime environment by using Symfony via the following com
 php bin/console server:run
 ```
 Leave this console open.\
-Then consult the URL <http://127.0.0.1:8000> from your browser.
+Then consult the URL <http://127.0.0.1:8000/api/docs> from your browser.
 
 ## Made with
 * [Symfony](https://symfony.com/) - Framework PHP
