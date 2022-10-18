@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class UserPersister implements ContextAwareDataPersisterInterface
+class UsersPersister implements ContextAwareDataPersisterInterface
 {
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $userPasswordHasher;
