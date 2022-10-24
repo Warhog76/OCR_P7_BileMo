@@ -1,33 +1,34 @@
 <?php
 
-namespace App\DataPersister;
+namespace App\State;
 
-use ApiPlatform\Core\DataPersister\DataPersisterInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Customers;
-use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class UsersPersister implements DataPersisterInterface
+class UsersProcessor implements ProcessorInterface
 {
     protected EntityManagerInterface $entityManager;
     protected UserPasswordHasherInterface $userPasswordHasher;
     protected TokenInterface $token;
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, TokenInterface $token)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher)
     {
         $this->entityManager = $entityManager;
         $this->userPasswordHasher = $userPasswordHasher;
-        $this->token = $token;
     }
 
-    public function supports($data): bool
-    {
-        return $data instanceof Users;
-    }
-
-    public function persist($data)
+    /**
+     * @param mixed $data
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
+     * @return void
+     */
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         $data->setRoles(['ROLE_USER']);
 
@@ -44,12 +45,6 @@ class UsersPersister implements DataPersisterInterface
         }
 
         $this->entityManager->persist($data);
-        $this->entityManager->flush();
-    }
-
-    public function remove($data)
-    {
-        $this->entityManager->remove($data);
         $this->entityManager->flush();
     }
 }

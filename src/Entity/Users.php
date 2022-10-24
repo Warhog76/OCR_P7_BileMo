@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Repository\UsersRepository;
+use App\State\UsersProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -37,7 +38,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     denormalizationContext: [
         'groups' => 'user:write', ],
     securityMessage: 'Only admins can add users.',
-    securityPostDenormalize: "is_granted('ROLE_ADMIN')"
+    securityPostDenormalize: "is_granted('ROLE_ADMIN')",
+    processor: UsersProcessor::class
 )]
 #[Delete(
     securityPostDenormalize: "is_granted('DELETE', object)",

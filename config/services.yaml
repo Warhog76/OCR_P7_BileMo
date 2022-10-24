@@ -27,3 +27,5 @@ services:
         decorates: 'api_platform.openapi.factory'
         arguments: ['@App\OpenApi\JwtDecorator.inner']
         autoconfigure: false
+
+    App\State\UsersProcessor: ~
