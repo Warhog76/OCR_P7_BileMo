@@ -21,13 +21,6 @@ class UsersProcessor implements ProcessorInterface
         $this->userPasswordHasher = $userPasswordHasher;
     }
 
-    /**
-     * @param mixed $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return void
-     */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         $data->setRoles(['ROLE_USER']);
