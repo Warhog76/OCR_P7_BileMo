@@ -29,6 +29,8 @@ class UsersPersister implements DataPersisterInterface
 
     public function persist($data)
     {
+        $data->setRoles(['ROLE_USER']);
+
         if ($data->getPassword()) {
             $data->setPassword(
                 $this->userPasswordHasher->hashPassword($data, $data->getPassword())
@@ -36,13 +38,10 @@ class UsersPersister implements DataPersisterInterface
             $data->eraseCredentials();
         }
 
-        $data->setRoles(['ROLE_USER']);
-
         $customer = $this->token->getUser();
-        if (!$customer instanceof Customers) {
-            return false;
+        if ($customer instanceof Customers) {
+            $data->setRelation($customer);
         }
-        $data->setRelation($customer);
 
         $this->entityManager->persist($data);
         $this->entityManager->flush();
