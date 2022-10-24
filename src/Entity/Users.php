@@ -86,7 +86,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['user:item:read', 'user:write'])]
+    #[Groups(['user:item:read'])]
     private ?array $roles = [];
 
     #[ORM\ManyToOne(inversedBy: 'relation')]

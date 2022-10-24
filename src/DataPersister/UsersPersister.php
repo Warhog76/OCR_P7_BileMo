@@ -2,18 +2,18 @@
 
 namespace App\DataPersister;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use App\Entity\Customers;
 use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class UsersPersister implements ContextAwareDataPersisterInterface
+class UsersPersister implements DataPersisterInterface
 {
-    private EntityManagerInterface $entityManager;
-    private UserPasswordHasherInterface $userPasswordHasher;
-    private TokenInterface $token;
+    protected EntityManagerInterface $entityManager;
+    protected UserPasswordHasherInterface $userPasswordHasher;
+    protected TokenInterface $token;
 
     public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher, TokenInterface $token)
     {
@@ -22,14 +22,13 @@ class UsersPersister implements ContextAwareDataPersisterInterface
         $this->token = $token;
     }
 
-    public function supports($data, array $context = []): bool
+    public function supports($data): bool
     {
         return $data instanceof Users;
     }
 
-    public function persist($data, array $context = [])
+    public function persist($data)
     {
-
         if ($data->getPassword()) {
             $data->setPassword(
                 $this->userPasswordHasher->hashPassword($data, $data->getPassword())
@@ -43,13 +42,13 @@ class UsersPersister implements ContextAwareDataPersisterInterface
         if (!$customer instanceof Customers) {
             return false;
         }
-        $data->setRelation($customer->getId());
+        $data->setRelation($customer);
 
         $this->entityManager->persist($data);
         $this->entityManager->flush();
     }
 
-    public function remove($data, array $context = [])
+    public function remove($data)
     {
         $this->entityManager->remove($data);
         $this->entityManager->flush();
