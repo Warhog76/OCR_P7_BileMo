@@ -24,7 +24,7 @@ class UsersFixtures extends Fixture
         $user1->setRoles(['ROLE_USER']);
         $password = $this->hasher->hashPassword($user1, 'User1');
         $user1->setPassword($password);
-        $user1->addCustomer($this->getReference('customer1'));
+        $user1->setRelation($this->getReference('customer1'));
         $manager->persist($user1);
 
         $user2 = new Users();
@@ -33,7 +33,7 @@ class UsersFixtures extends Fixture
         $user2->setRoles(['ROLE_USER']);
         $password = $this->hasher->hashPassword($user2, 'User2');
         $user2->setPassword($password);
-        $user2->addCustomer($this->getReference('customer2'));
+        $user2->setRelation($this->getReference('customer2'));
         $manager->persist($user2);
 
         $user3 = new Users();
@@ -42,7 +42,7 @@ class UsersFixtures extends Fixture
         $user3->setRoles(['ROLE_USER']);
         $password = $this->hasher->hashPassword($user3, 'User3');
         $user3->setPassword($password);
-        $user3->addCustomer($this->getReference('customer3'));
+        $user3->setRelation($this->getReference('customer3'));
         $manager->persist($user3);
 
         $user4 = new Users();
@@ -51,7 +51,7 @@ class UsersFixtures extends Fixture
         $user4->setRoles(['ROLE_USER']);
         $password = $this->hasher->hashPassword($user1, 'User4');
         $user4->setPassword($password);
-        $user4->addCustomer($this->getReference('customer1'));
+        $user4->setRelation($this->getReference('customer1'));
         $manager->persist($user4);
 
         $manager->flush();

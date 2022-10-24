@@ -13,16 +13,20 @@ security:
             entity:
                 class: 'App\Entity\Users'
                 property: 'email'
+        customer:
+            entity:
+                class: 'App\Entity\Customers'
+                property: 'email'
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        login:
+        login_customer:
             pattern: ^/api/login
             stateless: true
-            provider: user
+            provider: customer
             json_login:
                 check_path: /api/login_check
                 username_path: email
@@ -30,10 +34,10 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
-        api:
+        api_customer:
             pattern: ^/api/
             stateless: true
-            provider: user
+            provider: customer
             entry_point: jwt
             jwt: ~
 

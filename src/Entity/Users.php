@@ -10,8 +10,6 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Repository\UsersRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -22,22 +20,28 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     paginationClientItemsPerPage: true,
     paginationItemsPerPage: 5,
-    paginationMaximumItemsPerPage: 10,
-    security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_USER')"
+    paginationMaximumItemsPerPage: 10
 )]
 #[GetCollection(
     normalizationContext: [
-        'groups' => 'user:collection:read', ]
+        'groups' => 'user:collection:read', ],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[Get(
     normalizationContext: [
-        'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ]
+        'groups' => ['user:item:read', 'user:collection:read', 'customer:collection:read'], ],
+    security: "is_granted('SHOW', object)",
+    securityMessage: 'Sorry, but you are not the actual customer of this user.'
 )]
 #[Post(
-    security: "is_granted('ROLE_ADMIN')"
+    denormalizationContext: [
+        'groups' => 'user:write', ],
+    securityMessage: 'Only admins can add users.',
+    securityPostDenormalize: "is_granted('ROLE_ADMIN')"
 )]
 #[Delete(
-    security: "is_granted('ROLE_ADMIN')"
+    securityPostDenormalize: "is_granted('DELETE', object)",
+    securityPostDenormalizeMessage: 'Sorry, but you are not the actual customer of this user.'
 )]
 #[ApiFilter(
     SearchFilter::class, properties: [
@@ -66,8 +70,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(
-        min: '10',
-        minMessage: 'Your password must contain at least 10 characters'
+        min: '8',
+        minMessage: 'Your password must contain at least 8 characters'
     )]
     #[Assert\NotNull]
     #[Groups(['user:write'])]
@@ -82,18 +86,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
-    #[Assert\NotBlank]
     #[Groups(['user:item:read'])]
     private ?array $roles = [];
 
-    #[ORM\ManyToMany(targetEntity: Customers::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(inversedBy: 'relation')]
+    #[ORM\JoinColumn(nullable: false)]
     #[Groups(['customer:collection:read'])]
-    private Collection $customers;
-
-    public function __construct()
-    {
-        $this->customers = new ArrayCollection();
-    }
+    private ?Customers $relation = null;
 
     public function getId(): ?int
     {
@@ -143,7 +142,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->email;
     }
 
     public function getRoles(): array
@@ -161,31 +160,19 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Customers>
-     */
-    public function getCustomers(): Collection
-    {
-        return $this->customers;
-    }
-
-    public function addCustomer(Customers $customer): self
-    {
-        if (!$this->customers->contains($customer)) {
-            $this->customers->add($customer);
-        }
-
-        return $this;
-    }
-
-    public function removeCustomer(Customers $customer): self
-    {
-        $this->customers->removeElement($customer);
-
-        return $this;
-    }
-
     public function eraseCredentials()
     {
+    }
+
+    public function getRelation(): ?Customers
+    {
+        return $this->relation;
+    }
+
+    public function setRelation(?Customers $relation): self
+    {
+        $this->relation = $relation;
+
+        return $this;
     }
 }

@@ -2,12 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\CustomersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,20 +12,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomersRepository::class)]
-#[ApiResource(
-    security: "is_granted('ROLE_ADMIN')"
-)]
-#[GetCollection(
-    normalizationContext: [
-        'groups' => 'customer:collection:read', ]
-)]
-#[Get(
-    normalizationContext: [
-        'groups' => ['customer:item:read', 'customer:collection:read'], ]
-)]
-#[Post]
-#[Put]
-#[Delete]
 class Customers implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -43,13 +23,12 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    #[Groups(['customer:collection:read', 'customer:item:write'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\NotNull]
-    #[Groups(['customer:item:read', 'customer:item:write'])]
+    #[Groups(['customer:collection:read'])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
@@ -69,16 +48,16 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Products::class, mappedBy: 'customers')]
     private Collection $products;
 
-    #[ORM\ManyToMany(targetEntity: Users::class, mappedBy: 'customers')]
-    private Collection $users;
-
     #[ORM\Column(length: 255)]
     private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'relation', targetEntity: Users::class, orphanRemoval: true)]
+    private Collection $relation;
 
     public function __construct()
     {
         $this->products = new ArrayCollection();
-        $this->users = new ArrayCollection();
+        $this->relation = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -129,7 +108,7 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->surname;
+        return (string) $this->email;
     }
 
     public function getRoles(): array
@@ -174,33 +153,6 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Users>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(Users $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addCustomer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(Users $user): self
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeCustomer($this);
-        }
-
-        return $this;
-    }
-
     public function getPassword(): ?string
     {
         return $this->password;
@@ -216,5 +168,35 @@ class Customers implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection<int, Users>
+     */
+    public function getRelation(): Collection
+    {
+        return $this->relation;
+    }
+
+    public function addRelation(Users $relation): self
+    {
+        if (!$this->relation->contains($relation)) {
+            $this->relation->add($relation);
+            $relation->setRelation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Users $relation): self
+    {
+        if ($this->relation->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getRelation() === $this) {
+                $relation->setRelation(null);
+            }
+        }
+
+        return $this;
     }
 }
